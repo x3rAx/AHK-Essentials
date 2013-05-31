@@ -13,27 +13,38 @@
         path    - The path being checked.
 
     Returns:
-        string path - Returns the canonicalized absolute pathname on success. The resulting path will have no symbolic 
-                        link, '/./' or '/../' components.
+        string path - Returns the canonicalized absolute pathname on success. The resulting path will have no '/./' or 
+                        '/../' components.
         bool false  - On failure, e.g. if the file does not exist.
 */
 realpath(path) {
-    ; This hack uses the working dir to determine the realpath
+    fileAttributes := FileExist(path)
 
-    ; But first check if the file / directory exists anyways
-    if (!FileExist(path)) {
-        return false
+    if (InStr(fileAttributes, "D")) {
+        ; Its a directory. Use WorkingDir hack
+        ; This hack uses the working dir to determine the realpath
+
+        ; First save the working dir
+        workingDir := A_WorkingDir
+
+        ; then set the working dir to be the given path
+        SetWorkingDir %path%
+
+        ; and after that, set the realpath to be the working dir.
+        realpath := A_WorkingDir
+
+        ; Finally restore the original working dir.
+        SetWorkingDir %workingDir%
+    } else if (fileAttributes != "") {
+        ; Seems to be a file. Get realpath of it
+        Loop %path%, 1 
+        {
+            realpath = %A_LoopFileLongPath%
+        }
+    } else {        
+        ; No directory, no file, what is it? -> INVALID!!!
+        realpath := false
     }
 
-    ; Now save the working dir
-    workingDir := A_WorkingDir
-
-    ; ... set the path to be the working dir and read the A_WorkingDir variable to geht the path without eventual dots
-    SetWorkingDir %path%
-    path := A_WorkingDir
-
-    ; and finally restore the original working dir
-    SetWorkingDir %workingDir%
-
-    return %path%
+    return %realpath%
 }
