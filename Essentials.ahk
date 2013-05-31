@@ -18,6 +18,9 @@
         bool false  - On failure, e.g. if the file does not exist.
 */
 realpath(path) {
+    ; Convert '/'' to '\'
+    StringReplace path, path, "/", "\", All
+
     fileAttributes := FileExist(path)
 
     if (InStr(fileAttributes, "D")) {
@@ -37,9 +40,9 @@ realpath(path) {
         SetWorkingDir %workingDir%
     } else if (fileAttributes != "") {
         ; Seems to be a file. Get realpath of it
-        Loop %path%, 1 
+        Loop %path%, 1
         {
-            realpath = %A_LoopFileLongPath%
+            realpath := A_LoopFileLongPath
         }
     } else {        
         ; No directory, no file, what is it? -> INVALID!!!
