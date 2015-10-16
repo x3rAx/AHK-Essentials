@@ -9,7 +9,7 @@ This bundle (I wouldn't go so far as to call this a library) will be extended
 whenever I feel some function is missing in AutoHotkey.
 
 If you also have any functions that you think might belong here, feel free to
-fork, edit and make a pull request. :)
+fork, edit and send a pull request. :)
 
 
 
